@@ -14,6 +14,13 @@ int main(void){
 	while(cntrl <= size){
 		if(table[cntrl].key[0]!= '\0'){
 			fprintf(exit,"chave: %s hash: %d\n",table[cntrl].key, cntrl);
+			if(table[cntrl].proximo != NULL){
+				node *current = table[cntrl].proximo;
+				while(current != NULL){
+					fprintf(exit,"valor encadeado === chave: %s", current->key);
+					current = current->proximo;
+				}
+			}
 			cntrl++;
 		}
 		else{

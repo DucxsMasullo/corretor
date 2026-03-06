@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include<string.h>
+#include<math.h>
 #include "corretor.h"
 
 int countword(){
@@ -13,6 +14,7 @@ int countword(){
 	while(fgets(temp,sizeof(temp),dic) != NULL){
 		valor++;
 	}
+	valor = valor*5;
 	while(isprime(valor) == 0){
 		valor++;
 	}
@@ -20,11 +22,11 @@ int countword(){
 }
 
 int isprime(int valor){
-	unsigned long int test = 0;
-	test = valor;
-
-	for(unsigned long int i=2;i<test;i++){
-		if(test%i == 0){
+	if(valor <= 1){
+		return 0;
+	}
+	for(int i = 2; i <= sqrt(valor); i++){
+		if(valor % i == 0){
 			return 0;
 		}
 	}
@@ -55,6 +57,7 @@ void hashatable(node table[], int size){
 			cntrl++;
 		}
 		index = index % modulo;
+
 		if(table[index].key[0] == '\0'){
 			strncpy(table[index].key, currentword, sizeof(table[index].key));
 			printf("\npalavra: %s    ---- hash: %ld", currentword, index);
@@ -76,6 +79,5 @@ void hashatable(node table[], int size){
 			printf("\npalavra: %s    ---- hash: %ld", currentword, index);
 		}
 	}
-	printf("\n\n\n\n\nsaiu do hash");
 }
 
