@@ -1,0 +1,19 @@
+# exes
+*.out
+*.exe
+
+#objs
+*.o
+
+#build
+build/
+
+#vscode
+.vscode/
+
+#temps
+*.log
+*.temp
+
+#dados
+*.txt
