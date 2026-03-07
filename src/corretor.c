@@ -2,82 +2,88 @@
 #include <stdio.h>
 #include<string.h>
 #include<math.h>
+#include <ctype.h>
 #include "corretor.h"
 
-int countword(){
-	int valor = 0;
-	char temp[46];
-	FILE *dic = fopen("dicionario.txt", "r");
+int countwords(){
+	FILE *dic = fopen("dicionario.txt","r");
+	char buffer[99];
+	unsigned long int size;
 	if(dic == NULL){
+		printf("\nerro ao localizar dicionario");
 		exit(EXIT_FAILURE);
 	}
-	while(fgets(temp,sizeof(temp),dic) != NULL){
-		valor++;
+	while(fgets(buffer,sizeof(buffer),dic) != NULL){
+		size++;
 	}
-	valor = valor*5;
-	while(isprime(valor) == 0){
-		valor++;
-	}
-	return valor;
+	fclose(dic);
+	return size;
 }
 
-int isprime(int valor){
-	if(valor <= 1){
-		return 0;
+int makehashmodule(int size){
+	while(isprime(size) == 0){
+		size++;
 	}
-	for(int i = 2; i <= sqrt(valor); i++){
-		if(valor % i == 0){
+	return size*5;
+}
+
+int isprime(int value){
+	for(unsigned long int i = 2; i<sqrt(value);i++){
+		if(value%i == 0){
 			return 0;
 		}
 	}
 	return 1;
 }
 
-void createhashtable(node **table, int size){
-	*table = calloc(size*2, sizeof(node));
-	if(*table == NULL){
+void normalizeword(char word[]){
+	int cntrl = 0;
+	while(word[cntrl] != '\0'){
+		if(isalpha(word[cntrl])){
+			word[cntrl] = tolower(word[cntrl]);
+		}
+		else{
+			word[cntrl] = '\0';
+		}
+	}
+}
+
+int makeahash(char word[],int module){
+	unsigned long int index = 0;
+	int base = 31;
+	int cntrl = 0;
+	while(word[cntrl] != '\0'){
+		index = (index * base) + word[cntrl];
+		cntrl;
+	}
+	return (index%module);
+}
+
+node* makearray(int module){
+	node *newnode = calloc(module, sizeof(node));
+	if(newnode == NULL){
+		printf("\n falha ao alocar memoria");
 		exit(EXIT_FAILURE);
 	}
 }
 
-void hashatable(node table[], int size){
+void createtable(node **table){
+	unsigned long int size = countword();
+	unsigned long int module = makehashmodule(size);
+	unsigned long int hash = 0;
+	char buffer[999];
 	FILE *dic = fopen("dicionario.txt", "r");
-	char currentword[46];
-	int base = 31;
-	int modulo = size;
 	if(dic == NULL){
 		exit(EXIT_FAILURE);
 	}
-
-	while(fgets(currentword, sizeof(currentword),dic)!= NULL){
-		unsigned long int index = 0;
-		int cntrl = 0;
-		while(currentword[cntrl] != '\0'){
-			index = (index * base) + currentword[cntrl];
-			cntrl++;
-		}
-		index = index % modulo;
-
-		if(table[index].key[0] == '\0'){
-			strncpy(table[index].key, currentword, sizeof(table[index].key));
-			printf("\npalavra: %s    ---- hash: %ld", currentword, index);
+	while(fgets(buffer, sizeof(buffer),dic) != NULL){
+		normalizeword(buffer);
+		hash = makeahash(buffer, module);
+		if(table[hash]->proximo == NULL){
+			//chamada de inserção simples;
 		}
 		else{
-			node *current = &table[index];
-			node *newnode = NULL;
-			while(current->proximo != NULL){
-				current = current->proximo;
-			}
-			newnode = malloc(sizeof(node));
-			if(newnode == NULL){
-				exit(EXIT_FAILURE);
-			}
-			current->proximo = newnode;
-			current = current->proximo;
-			current->proximo = NULL;
-			strncpy(current->key,currentword, sizeof(current->key));
-			printf("\npalavra: %s    ---- hash: %ld", currentword, index);
+			//chama inserção encadeada
 		}
 	}
 }
-

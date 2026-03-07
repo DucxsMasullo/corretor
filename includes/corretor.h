@@ -7,7 +7,6 @@ typedef struct no{
 } node;
 
 int countword();//abre o dicionario e conta as palavras
-void createhashtable(node **table,int size);
-void hashatable(node table[], int size);
-int isprime(int valor);
+int isprime(int value);
+int makehashmodule(int size);
 #endif
