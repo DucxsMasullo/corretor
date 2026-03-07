@@ -5,10 +5,10 @@
 #include <ctype.h>
 #include "corretor.h"
 
-int countwords(){
+unsigned long int countwords(){
 	FILE *dic = fopen("dicionario.txt","r");
 	char buffer[99];
-	unsigned long int size;
+	unsigned long int size = 0;
 	if(dic == NULL){
 		printf("\nerro ao localizar dicionario");
 		exit(EXIT_FAILURE);
@@ -28,7 +28,7 @@ int makehashmodule(int size){
 }
 
 int isprime(int value){
-	for(unsigned long int i = 2; i<sqrt(value);i++){
+	for(unsigned long int i = 2; i*i<value; i++){
 		if(value%i == 0){
 			return 0;
 		}
@@ -41,6 +41,7 @@ void normalizeword(char word[]){
 	while(word[cntrl] != '\0'){
 		if(isalpha(word[cntrl])){
 			word[cntrl] = tolower(word[cntrl]);
+			cntrl ++;
 		}
 		else{
 			word[cntrl] = '\0';
@@ -54,7 +55,7 @@ int makeahash(char word[],int module){
 	int cntrl = 0;
 	while(word[cntrl] != '\0'){
 		index = (index * base) + word[cntrl];
-		cntrl;
+		cntrl++;
 	}
 	return (index%module);
 }
@@ -65,25 +66,53 @@ node* makearray(int module){
 		printf("\n falha ao alocar memoria");
 		exit(EXIT_FAILURE);
 	}
+	return newnode;
+}
+
+void insertsimple(node **table, int hash, char word[]){
+	strncpy((*table)[hash].key, word, sizeof((*table)[hash].key));
+}
+
+void insertchained(node *table, char word[]){
+	node *current = table;
+	while(current->proximo != NULL){
+		current = current->proximo;
+	}
+	current->proximo = calloc(1,sizeof(node));
+	current = current->proximo;
+	if(current == NULL){
+		printf("\n erro ao alocar no encadeado");
+		exit(EXIT_FAILURE);
+	}
+	strncpy(current->key,word,sizeof(current->key));
 }
 
 void createtable(node **table){
-	unsigned long int size = countword();
+	unsigned long int size = countwords();
 	unsigned long int module = makehashmodule(size);
 	unsigned long int hash = 0;
 	char buffer[999];
 	FILE *dic = fopen("dicionario.txt", "r");
+
+	
 	if(dic == NULL){
 		exit(EXIT_FAILURE);
 	}
+
+	*table = makearray(module);
+
 	while(fgets(buffer, sizeof(buffer),dic) != NULL){
 		normalizeword(buffer);
 		hash = makeahash(buffer, module);
-		if(table[hash]->proximo == NULL){
-			//chamada de inserção simples;
+		if((*table)[hash].key[0] == '\0'){
+			insertsimple(table, hash, buffer);
 		}
 		else{
-			//chama inserção encadeada
+			insertchained(&(*table)[hash], buffer);
 		}
 	}
+}
+
+void placeholder(){
+	return ;
 }

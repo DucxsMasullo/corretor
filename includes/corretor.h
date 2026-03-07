@@ -6,7 +6,15 @@ typedef struct no{
 	struct no *proximo;
 } node;
 
-int countword();//abre o dicionario e conta as palavras
-int isprime(int value);
-int makehashmodule(int size);
+void createtable(node **table);//cria a hashtable
+unsigned long int countwords();//abre o dicionario e conta as palavras
+int isprime(int value);//verifica se é primo
+int makehashmodule(int size);//cria um modulo dado tamanho do vetor
+node* makearray(int module);//cria o vetor dado tamanho do modulo
+void normalizeword(char word[]);//torna palavra minuscula terminando '\0'
+int makeahash(char word[],int module);//cria um hash dada string
+void insertsimple(node **table, int hash, char word[]);//insere ao vetor
+void insertchained(node *table, char word[]);//insere como proximo a um item
+
+
 #endif
