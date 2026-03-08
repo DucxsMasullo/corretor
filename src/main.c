@@ -5,10 +5,10 @@
 
 int main(void){
 	node *table = NULL;
+	createtable(&table);
+
+	int module = makehashmodule(countwords());
+	lookforerros(module, table);
 	
-
-
-
-
 }
-
+//erro ao ler strings da biblia

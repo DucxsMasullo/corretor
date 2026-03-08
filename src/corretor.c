@@ -113,6 +113,72 @@ void createtable(node **table){
 	}
 }
 
-void placeholder(){
-	return ;
+int verifyhash(char buffer[], int hash, node table){
+	node *current = &table;
+	if(buffer[0] == '\0'){
+		return -1;
+	}
+
+	if(strcmp(buffer,table.key)==0){
+		return 0;
+	}
+	else if(table.proximo != NULL){
+		return verifyson(buffer, table.proximo);
+	}
+	return 1;
 }
+
+int verifyson(char buffer[],node *actual){
+	if(strcmp(buffer, actual->key)==0){
+		return 0;
+	}
+	else if(actual->proximo != NULL){
+		return verifyson(buffer, actual->proximo);
+	}
+	else{
+		return 1;
+	}
+}
+
+void clearbuffer(char buffer[], int size){
+	for(int i=0;i<=size;i++){
+		buffer[i]='\0';
+	}
+}
+	
+
+void lookforerros(int module, node table[]){
+	FILE *arq = fopen("arquivo.txt", "r");
+	FILE *erros = fopen("erros.txt","w");
+	char line[1000];
+	char buffer[1000];
+	int cntrl = 0;
+	if(arq == NULL){
+		printf("\n erro ao ler arquivo");
+		exit(EXIT_FAILURE);
+	}
+	while(fgets(line, sizeof(line),arq) != NULL){
+		for(int i=0; line[i]!= '\n';i++){
+			if(isalpha(line[i])){
+				buffer[cntrl]=line[i];
+				cntrl++;
+			}
+			else{
+				normalizeword(buffer);
+				int hash = makeahash(buffer, module);
+				switch(verifyhash(buffer,hash,table[hash])){
+					case -1:
+					break;
+					case 0:
+					break;
+					case 1:
+					fprintf(erros, "erro em : %s\n", buffer);
+					break;
+				}
+				clearbuffer(buffer, sizeof(buffer));
+				cntrl = 0;
+			}
+		}
+	}
+	fclose(erros);
+}	
