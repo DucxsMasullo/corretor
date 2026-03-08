@@ -49,6 +49,7 @@ void normalizeword(char word[]){
 	}
 }
 
+
 int makeahash(char word[],int module){
 	unsigned long int index = 0;
 	int base = 31;
@@ -140,11 +141,6 @@ int verifyson(char buffer[],node *actual){
 	}
 }
 
-void clearbuffer(char buffer[], int size){
-	for(int i=0;i<=size;i++){
-		buffer[i]='\0';
-	}
-}
 	
 
 void lookforerros(int module, node table[]){
@@ -158,12 +154,12 @@ void lookforerros(int module, node table[]){
 		exit(EXIT_FAILURE);
 	}
 	while(fgets(line, sizeof(line),arq) != NULL){
-		for(int i=0; line[i]!= '\n';i++){
+		for(int i=0; line[i]!= '\n' && line[i]!= '\0' ;i++){
 			if(isalpha(line[i])){
 				buffer[cntrl]=line[i];
 				cntrl++;
 			}
-			else{
+			if(isalpha(line[i])==0 || line[i+1] == '\n' ){
 				normalizeword(buffer);
 				int hash = makeahash(buffer, module);
 				switch(verifyhash(buffer,hash,table[hash])){
@@ -175,7 +171,7 @@ void lookforerros(int module, node table[]){
 					fprintf(erros, "erro em : %s\n", buffer);
 					break;
 				}
-				clearbuffer(buffer, sizeof(buffer));
+				memset(buffer, 0, sizeof(buffer));
 				cntrl = 0;
 			}
 		}
